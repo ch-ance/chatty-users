@@ -12,9 +12,11 @@ authRouter.post('/register', async (req, res) => {
 
         const userID = Math.floor(Math.random() * 1000)
 
+        const hash = bcrypt.hashSync(password, 10)
+
         const user = {
             username,
-            password,
+            password: hash,
             userID
         }
         await Users.add(user)
@@ -28,8 +30,6 @@ authRouter.post('/login', async (req, res) => {
     const { username, password } = req.body
 
     const [user] = await Users.findByUsername(username)
-
-    const hash = bcrypt.hashSync(user.password, 10)
 
     if (user && bcrypt.compareSync(password, user.password)) {
         const token = genToken(user)
