@@ -10,11 +10,12 @@ async function find() {
     return await db('users').select('*')
 }
 
-function findByUsername(username) {
-    return db('users')
+async function findByUsername(username) {
+    const user = await db('users')
         .select('*')
         .where({ username })
         .first()
+    return user
 }
 
 async function add(user) {
