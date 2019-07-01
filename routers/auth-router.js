@@ -25,27 +25,22 @@ authRouter.post('/register', async (req, res) => {
 })
 
 authRouter.post('/login', async (req, res) => {
-    try {
-        const { username, password } = req.body
+    const { username, password } = req.body
 
-        const [user] = await Users.findByUsername(username)
+    const [user] = await Users.findByUsername(username)
 
-        const hash = bcrypt.hashSync(user.password, 10)
+    const hash = bcrypt.hashSync(user.password, 10)
 
-        if (bcrypt.compareSync(password, hash)) {
-            const token = genToken(user)
-            res.status(201).json(
-                {
-                    username: user.username,
-                    password: hash
-                },
-                token
-            )
-        } else {
-            res.status(500).json({ message: 'Invalid credentials ' })
-        }
-    } catch (error) {
-        res.status(500).json({ message: 'User not found' })
+    if (user && bcrypt.compareSync(password, user.password)) {
+        const token = genToken(user)
+        res.status(201).json(
+            {
+                message: `Welcome ${user.username}!`
+            },
+            token
+        )
+    } else {
+        res.status(500).json({ message: 'Invalid credentials ' })
     }
 })
 
