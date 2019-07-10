@@ -10,21 +10,37 @@ authRouter.post('/register', async (req, res) => {
     try {
         const { username, password } = req.body
 
-        const userID = Math.floor(Math.random() * 1000)
+        const userID = getID()
 
         const hash = bcrypt.hashSync(password, 10)
 
         const user = {
             username,
             password: hash,
-            userID
+            userID,
         }
         await Users.add(user)
         res.status(201).json({
-            message: `Successfully registered user ${username}`
+            message: `Successfully registered user ${username}`,
         })
     } catch (error) {
         res.status(400).json({ message: 'Error adding user' })
+    }
+
+    function getID() {
+        const id = Math.random()
+            .toString(36)
+            .replace(/[^a-z]+/g, '')
+            .substr(0, 5)
+            .toUpperCase()
+            .concat(
+                Math.random()
+                    .toString(36)
+                    .replace(/[^a-z]+/g, '')
+                    .substr(0, 5)
+                    .toUpperCase(),
+            )
+        return id
     }
 })
 
@@ -38,7 +54,7 @@ authRouter.post('/login', (req, res) => {
                 res.status(200).json({
                     message: `Welcome ${user.username}!`,
                     token,
-                    userID: user.userID
+                    userID: user.userID,
                 })
             } else {
                 res.status(401).json({ message: 'Invalid credentials' })
@@ -52,11 +68,11 @@ authRouter.post('/login', (req, res) => {
 function genToken(user) {
     const payload = {
         subject: user.id,
-        username: user.username
+        username: user.username,
     }
 
     const options = {
-        expiresIn: '1d'
+        expiresIn: '1d',
     }
     return jwt.sign(payload, secret, options)
 }
