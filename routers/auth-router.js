@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs')
 const Users = require('../data/helpers/users-model')
 const secret = process.env.JWT_SECRET || 'secret'
 
-authRouter.post('/register', async (req, res) => {
+authRouter.post('/register', (req, res) => {
     try {
         const { username, password } = req.body
 
@@ -19,7 +19,7 @@ authRouter.post('/register', async (req, res) => {
             password: hash,
             userID,
         }
-        await Users.add(user)
+        Users.add(user)
         res.status(201).json({
             message: `Successfully registered user ${username}`,
         })
