@@ -44,10 +44,10 @@ authRouter.post('/register', (req, res) => {
     }
 })
 
-authRouter.post('/login', (req, res) => {
+authRouter.post('/login', async (req, res) => {
     let { username, password } = req.body
 
-    Users.findByUsername(username)
+    await Users.findByUsername(username)
         .then(user => {
             if (user && bcrypt.compareSync(password, user.password)) {
                 const token = genToken(user)
