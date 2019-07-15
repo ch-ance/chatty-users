@@ -12,18 +12,16 @@ userRouter.get('/users', async (req, res) => {
 })
 
 userRouter.post('/request-add-contact', async (req, res) => {
-    try {
-        const { first_user, second_user } = req.body
-        await Users.sendContactRequest(first_user, second_user).then(
-            response => {
-                console.log('RESPONSE: ', res)
-                res.status(201).json({ response })
-            },
-        )
-    } catch (error) {
-        console.error(error)
-        res.status(402).json({ error: 'Error adding contact' })
-    }
+    const { first_user, second_user } = req.body
+    await Users.sendContactRequest(first_user, second_user)
+        .then(response => {
+            console.log('RESPONSE: ', res)
+            res.status(201).json({ response })
+        })
+        .catch(err => {
+            console.error(err)
+            res.status(400).json({ error: 'Error adding contact' })
+        })
 })
 
 userRouter.get('/pending-contacts', async (req, res) => {
