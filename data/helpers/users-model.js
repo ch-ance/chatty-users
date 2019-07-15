@@ -8,6 +8,8 @@ module.exports = {
     getContacts,
     acceptContact,
     getPendingContacts,
+    getPendingContact,
+    removePendingRequest,
 }
 
 async function find() {
@@ -37,34 +39,35 @@ async function getPendingContacts() {
     return await db('pendingContacts').select('*')
 }
 
-async function acceptContact(id) {
-    let valid = false
-    const { first_user, second_user } = await db('pendingContacts')
+async function getPendingContact(id) {
+    return await db('pendingContacts')
         .where({ id })
         .first()
         .select('*')
-        .then(async response => {
-            await db('friendships')
-                .insert({
-                    first_user: response.first_user,
-                    second_user: response.second_user,
-                })
-                .returning('*')
-                .then(resp => {
-                    res.status(201).json({ message: 'contact added' })
-                })
-                .catch(err => {
-                    console.error(err)
-                    res.status(402).json({ error: 'error adding contact' })
-                })
-        })
+}
 
-    console.log(first_user)
-    console.log(second_user)
+async function acceptContact(first_user, second_user) {
+    const newFriendship = await db('friendships')
+        .insert({
+            first_user,
+            second_user,
+        })
+        .returning('*')
+
+    return newFriendship
+}
+
+async function removePendingRequest(id) {
+    await db('pendingContacts')
+        .where({ id })
+        .first()
+        .delete()
 }
 
 async function getContacts(username) {
-    return await db('friendships').select('*')
+    return await db('friendships')
+        .where({ first_user: username })
+        .select('*')
 }
 
 async function add(user) {
