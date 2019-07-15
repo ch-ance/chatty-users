@@ -5,7 +5,9 @@ module.exports = {
         client: 'pg',
         useNullAsDefault: true,
         connection: {
-            filename: './data/database',
+            database: process.env.DB_DEV_DATABASE,
+            user: process.env.DB_DEV_USER,
+            password: process.env.DB_DEV_PASSWORD,
         },
         migrations: {
             directory: './data/migrations',
