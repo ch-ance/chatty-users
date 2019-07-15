@@ -35,8 +35,10 @@ async function sendContactRequest(first_user, second_user) {
     return newRequest
 }
 
-async function getPendingContacts() {
-    return await db('pendingContacts').select('*')
+async function getPendingContacts(username) {
+    return await db('pendingContacts')
+        .where({ second_user: username })
+        .select('*')
 }
 
 async function getPendingContact(id) {
@@ -51,6 +53,13 @@ async function acceptContact(first_user, second_user) {
         .insert({
             first_user,
             second_user,
+        })
+        .returning('*')
+
+    await db('friendships')
+        .insert({
+            first_user: second_user,
+            second_user: first_user,
         })
         .returning('*')
 

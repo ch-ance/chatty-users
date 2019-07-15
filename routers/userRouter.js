@@ -24,8 +24,9 @@ userRouter.post('/request-add-contact', async (req, res) => {
         })
 })
 
-userRouter.get('/pending-contacts', async (req, res) => {
-    return await Users.getPendingContacts()
+userRouter.get('/:username/pending-contacts', async (req, res) => {
+    const { username } = req.params
+    return await Users.getPendingContacts(username)
         .then(response => {
             console.log(response)
             res.status(200).json(response)

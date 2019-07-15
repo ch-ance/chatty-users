@@ -1,9 +1,10 @@
 exports.up = function(knex) {
     return knex.schema.createTable('friendships', friendships => {
+        friendships.increments('id')
+
         friendships
             .string('first_user', 32)
             .notNullable()
-            .primary()
             .references('username')
             .inTable('users')
             .onDelete('cascade')
