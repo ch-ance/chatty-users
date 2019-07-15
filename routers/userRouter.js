@@ -59,10 +59,12 @@ userRouter.post('/accept-contact', async (req, res) => {
         .then(response => {
             console.log(response)
             res.status(201).json(response)
+            console.log('end of res')
         })
         .catch(err => {
             res.status(400).json({
-                error: 'Error accepting contact invitation',
+                message: 'Error accepting contact invitation',
+                err,
             })
         })
 })

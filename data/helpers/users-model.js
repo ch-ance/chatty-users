@@ -58,22 +58,28 @@ async function getPendingContacts() {
 async function acceptContact(id) {
     const { first_user_id, second_user_id } = await db('pendingContacts')
         .where({ id })
+        .first()
         .select('*')
+        .then(async response => {
+            await db('friendships')
+                .insert({
+                    first_user_id: response.first_user_id,
+                    second_user_id: response.second_user_id,
+                })
+                .returning('*')
+                .then(response2 => {
+                    res.status(201).json(response2)
+                    console.log('success')
+                })
+                .catch(err => {
+                    console.error(err)
+                    res.status(400).json(err)
+                    console.log('error')
+                })
+        })
 
-    await db('friendships')
-        .insert({
-            first_user_id,
-            second_user_id,
-        })
-        .returning('*')
-        .then(response => {
-            console.log(response)
-            res.status(201).json(response)
-        })
-        .catch(err => {
-            console.error(err)
-            res.status(400).json(err)
-        })
+    console.log(first_user_id)
+    console.log(second_user_id)
 }
 
 async function getContacts(userID) {
