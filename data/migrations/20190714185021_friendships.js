@@ -1,17 +1,17 @@
 exports.up = function(knex) {
     return knex.schema.createTable('friendships', friendships => {
         friendships
-            .string('first_user_id', 12)
+            .string('first_user', 32)
             .notNullable()
             .primary()
-            .references('userID')
+            .references('username')
             .inTable('users')
             .onDelete('cascade')
             .onUpdate('cascade')
         friendships
-            .string('second_user_id', 12)
+            .string('second_user', 32)
             .notNullable()
-            .references('userID')
+            .references('username')
             .inTable('users')
             .onDelete('cascade')
             .onUpdate('cascade')

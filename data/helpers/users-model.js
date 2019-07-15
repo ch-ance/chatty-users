@@ -22,11 +22,11 @@ async function findByUsername(username) {
     return user
 }
 
-async function sendContactRequest(first_user_id, second_user_id) {
+async function sendContactRequest(first_user, second_user) {
     const newRequest = await db('pendingContacts')
         .insert({
-            first_user_id,
-            second_user_id,
+            first_user,
+            second_user,
         })
         .returning('*')
 
@@ -38,15 +38,15 @@ async function getPendingContacts() {
 }
 
 async function acceptContact(id) {
-    const { first_user_id, second_user_id } = await db('pendingContacts')
+    const { first_user, second_user } = await db('pendingContacts')
         .where({ id })
         .first()
         .select('*')
         .then(async response => {
             await db('friendships')
                 .insert({
-                    first_user_id: response.first_user_id,
-                    second_user_id: response.second_user_id,
+                    first_user: response.first_user,
+                    second_user: response.second_user,
                 })
                 .returning('*')
                 .then(async response2 => {
@@ -77,11 +77,11 @@ async function acceptContact(id) {
                 })
         })
 
-    console.log(first_user_id)
-    console.log(second_user_id)
+    console.log(first_user)
+    console.log(second_user)
 }
 
-async function getContacts(userID) {
+async function getContacts(username) {
     return await db('friendships').select('*')
 }
 

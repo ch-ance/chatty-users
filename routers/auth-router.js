@@ -8,14 +8,13 @@ const secret = process.env.JWT_SECRET || 'secret'
 
 authRouter.post('/register', async (req, res) => {
     try {
-        const { username, password, userID } = req.body
+        const { username, password } = req.body
 
         const hash = bcrypt.hashSync(password, 10)
 
         const user = {
             username,
             password: hash,
-            userID,
         }
         await Users.add(user)
         res.status(201).json({
@@ -36,7 +35,6 @@ authRouter.post('/login', async (req, res) => {
                 res.status(200).json({
                     message: `Welcome ${user.username}!`,
                     token,
-                    userID: user.userID,
                 })
             } else {
                 res.status(401).json({ message: 'Invalid credentials' })
