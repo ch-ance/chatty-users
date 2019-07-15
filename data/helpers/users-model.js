@@ -38,6 +38,7 @@ async function getPendingContacts() {
 }
 
 async function acceptContact(id) {
+    let valid = false
     const { first_user, second_user } = await db('pendingContacts')
         .where({ id })
         .first()
@@ -49,31 +50,12 @@ async function acceptContact(id) {
                     second_user: response.second_user,
                 })
                 .returning('*')
-                .then(async response2 => {
-                    console.log('success')
-                    await db('pendingContacts')
-                        .where({ id })
-                        .first()
-                        .delete()
-                        .then(response3 => {
-                            console.log(response3)
-                            console.log('end of res3')
-                            res.status(201).json({
-                                message: 'Succesfully accepted contact request',
-                            })
-                        })
-                        .catch(err => {
-                            console.error(err)
-                            res.status(400).json({
-                                error: 'error accepting contact request',
-                            })
-                            console.log('end of deleting attempt error')
-                        })
+                .then(resp => {
+                    res.status(201).json({ message: 'contact added' })
                 })
                 .catch(err => {
                     console.error(err)
-                    res.status(400).json(err)
-                    console.log('error')
+                    res.status(402).json({ error: 'error adding contact' })
                 })
         })
 
