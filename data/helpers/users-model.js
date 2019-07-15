@@ -4,7 +4,6 @@ module.exports = {
     find,
     findByUsername,
     add,
-    addContact,
     sendContactRequest,
     getContacts,
     acceptContact,
@@ -23,15 +22,6 @@ async function findByUsername(username) {
     return user
 }
 
-async function addContact(first_friend_id, second_friend_id) {
-    return await db('friendships')
-        .insert({
-            first_friend_id,
-            second_friend_id,
-        })
-        .returning('*')
-}
-
 async function sendContactRequest(first_user_id, second_user_id) {
     const newRequest = await db('pendingContacts')
         .insert({
@@ -41,14 +31,6 @@ async function sendContactRequest(first_user_id, second_user_id) {
         .returning('*')
 
     return newRequest
-}
-
-async function findContactRequest(id) {
-    const request = await db('pendingContacts')
-        .where({ id })
-        .first()
-
-    return request
 }
 
 async function getPendingContacts() {
@@ -67,9 +49,26 @@ async function acceptContact(id) {
                     second_user_id: response.second_user_id,
                 })
                 .returning('*')
-                .then(response2 => {
-                    res.status(201).json(response2)
+                .then(async response2 => {
                     console.log('success')
+                    await db('pendingContacts')
+                        .where({ id })
+                        .first()
+                        .delete()
+                        .then(response3 => {
+                            console.log(response3)
+                            console.log('end of res3')
+                            res.status(201).json({
+                                message: 'Succesfully accepted contact request',
+                            })
+                        })
+                        .catch(err => {
+                            console.error(err)
+                            res.status(400).json({
+                                error: 'error accepting contact request',
+                            })
+                            console.log('end of deleting attempt error')
+                        })
                 })
                 .catch(err => {
                     console.error(err)

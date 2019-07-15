@@ -14,7 +14,6 @@ userRouter.get('/users', async (req, res) => {
 userRouter.post('/request-add-contact', async (req, res) => {
     try {
         const { first_user_id, second_user_id } = req.body
-        console.log(req.body)
         await Users.sendContactRequest(first_user_id, second_user_id).then(
             response => {
                 console.log('RESPONSE: ', res)
@@ -57,7 +56,6 @@ userRouter.post('/accept-contact', async (req, res) => {
 
     await Users.acceptContact(id)
         .then(response => {
-            console.log(response)
             res.status(201).json(response)
             console.log('end of res')
         })
