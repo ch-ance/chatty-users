@@ -1,14 +1,14 @@
 exports.up = function(knex) {
-    return knex.schema.createTable('friendships', friendships => {
-        friendships
+    return knex.schema.createTable('pendingContacts', pending => {
+        pending.increments('id')
+        pending
             .string('first_user_id', 12)
             .notNullable()
-            .primary()
             .references('userID')
             .inTable('users')
             .onDelete('cascade')
             .onUpdate('cascade')
-        friendships
+        pending
             .string('second_user_id', 12)
             .notNullable()
             .references('userID')
@@ -19,5 +19,5 @@ exports.up = function(knex) {
 }
 
 exports.down = function(knex) {
-    return knex.schema.dropTableIfExists('friendships')
+    return knex.schema.dropTableIfExists('pendingContacts')
 }
