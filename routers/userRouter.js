@@ -52,9 +52,9 @@ userRouter.get('/:username/contacts', async (req, res) => {
 })
 
 userRouter.post('/accept-contact', async (req, res) => {
-    const { id } = req.body
+    const { username } = req.body
 
-    await Users.getPendingContact(id)
+    await Users.getPendingContact(username)
         .then(async users => {
             console.log(users)
             await console.log(users.first_user)
@@ -63,7 +63,7 @@ userRouter.post('/accept-contact', async (req, res) => {
                 .then(async response => {
                     await console.log('attempting to remove')
                     console.log(response)
-                    await Users.removePendingRequest(id)
+                    await Users.removePendingRequest(username)
                         .then(response => {
                             console.log(response)
                             res.status(201).json({

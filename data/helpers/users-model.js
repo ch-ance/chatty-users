@@ -41,9 +41,9 @@ async function getPendingContacts(username) {
         .select('*')
 }
 
-async function getPendingContact(id) {
+async function getPendingContact(username) {
     return await db('pendingContacts')
-        .where({ id })
+        .where({ first_user: username })
         .first()
         .select('*')
 }
@@ -66,9 +66,9 @@ async function acceptContact(first_user, second_user) {
     return newFriendship
 }
 
-async function removePendingRequest(id) {
+async function removePendingRequest(username) {
     await db('pendingContacts')
-        .where({ id })
+        .where({ first_user: username })
         .first()
         .delete()
 }
