@@ -10,6 +10,7 @@ module.exports = {
     getPendingContacts,
     getPendingContact,
     removePendingRequest,
+    login,
 }
 
 async function find() {
@@ -84,4 +85,11 @@ async function add(user) {
         .insert(user)
         .returning('*')
     return newUser
+}
+
+async function login(username) {
+    const user = await db('users')
+        .where({ username })
+        .returning('*')
+    return user
 }
